@@ -1,153 +1,148 @@
 import React from "react";
-import styled from "styled-components";
+import { Button } from "../styles/Button";
 import { MdDelete } from "react-icons/md";
+import styled from "styled-components";
+import { useCart } from "../ContextApi/CartContext";
 import { Link } from "react-router-dom";
 
-const Wrapper = styled.div`
+const Wrep = styled.div`
   .del {
     scale: 2;
-    cursor: pointer;
   }
-
   .del:hover {
     color: red;
   }
-
   .del:active {
     color: red;
     scale: 2.4;
   }
 
-  h1.main-title {
-    font-size: 36px;
-    color: #9C2C10;
-    text-align: center;
-    margin-bottom: 40px;
+  /* Add these styles for product grid */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    gap: 20px; /* Space between products */
+    margin: 20px 0;
   }
 
-  .heading-row {
+  .product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
     display: flex;
-    justify-content: space-around;
-    border-bottom: none;
-    margin-bottom: 10px;
-    padding-bottom: 0;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .heading-row h3 {
-    position: relative;
-    font-size: 18px;
-    color: #7C3F1D;
-    font-weight: 600;
-    padding-bottom: 5px;
-  }
-
-  .heading-row h3::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    height: 2px;
+  .product-image {
     width: 100%;
-    background-color: #FF7F2A;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
   }
 
-  .col {
-    color: #FF7F2A;
+  .product-info {
+    width: 100%;
+    margin-top: 10px;
   }
 
-  .text-section {
-    background-color: #fff9e6;
-    padding: 40px;
-    border-radius: 10px;
+  @media (max-width: 992px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
+    }
+  }
+
+  @media (max-width: 576px) {
+    .product-grid {
+      grid-template-columns: 1fr; /* 1 column on small screens */
+    }
   }
 `;
 
-
-const staticCart = [
-  {
-    id: 1,
-    name: "Kaju Katli",
-    price: 249,
-    quantity: 2,
-    image: "/Home/3.jfif",
-  },
-  {
-    id: 2,
-    name: "Rasgulla",
-    price: 149,
-    quantity: 1,
-    image: "/Home/2.jfif",
-  },
-];
-
 export default function CartItems() {
-  const subtotal = staticCart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  const gst = (subtotal * 5) / 100;
-  const total = subtotal + gst;
+  const { cart, decrementQuantity, removeFromCart, incrementQuantity, subtotal } = useCart();
 
   return (
-    <Wrapper>
-      <div className="text-center align-items-center m-5">
-        <h1 className="mb-5">YOUR CART ITEMS</h1>
-        <div className="row text-center bg-dark text-white rounded">
-          <h3 className="col-5">Title</h3>
-          <h3 className="col">Price</h3>
-          <h3 className="col">Quantity</h3>
-          <h3 className="col">Total</h3>
-          <h3 className="col">Remove</h3>
-        </div>
-        <hr />
-
-        {staticCart.map((item) => (
-          <div key={item.id}>
-            <div className="row d-flex align-items-center">
-              <div className="col-5 d-flex align-items-center">
-                <img
-                  src={item.image}
-                  style={{ width: "100px", height: "100px" }}
-                  alt={item.name}
-                />
-                <h1 className="m-4">{item.name}</h1>
+    <Wrep>
+      <div className="container">
+        <h1 className="text-center mb-5">YOUR CART ITEMS</h1>
+        
+        {/* Product Grid */}
+        <div className="product-grid">
+          {cart.map((item) => (
+            <div key={item.id} className="product-card">
+              <img
+                src={item.image}
+                className="product-image"
+                alt={item.name}
+              />
+              <div className="product-info">
+                <h3>{item.name}</h3>
+                <p>Price: ₹{item.price}</p>
+                
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="quantity-controls">
+                    <button 
+                      onClick={() => decrementQuantity(item.id)}
+                      className="btn btn-sm btn-outline-secondary"
+                    >
+                      -
+                    </button>
+                    <span className="mx-2">{item.quantity}</span>
+                    <button 
+                      onClick={() => incrementQuantity(item.id)}
+                      className="btn btn-sm btn-outline-secondary"
+                    >
+                      +
+                    </button>
+                  </div>
+                  
+                  <div className="price-display">
+                    ₹{(item.price * item.quantity).toFixed(2)}
+                  </div>
+                </div>
+                
+                <button
+                  onClick={() => removeFromCart(item.id)}
+                  className="btn btn-danger btn-sm mt-2 w-100"
+                >
+                  <MdDelete /> Remove
+                </button>
               </div>
-              <p className="col">₹{item.price}</p>
-              <p className="col d-flex justify-content-around">
-                <span>➖</span>
-                {item.quantity}
-                <span>➕</span>
-              </p>
-              <h4 className="col">₹{(item.price * item.quantity).toFixed(2)}</h4>
-              <MdDelete className="col del" />
             </div>
-            <hr />
-          </div>
-        ))}
+          ))}
+        </div>
 
-        <div className="d-flex justify-content-end">
-          <div style={{ width: "500px" }}>
-            <div className="d-flex justify-content-between">
-              <div className="h5">Sub Total :</div>
-              <div>₹{subtotal.toFixed(2)}</div>
-            </div>
-            <div className="d-flex justify-content-between">
-              <div className="h5">GST :</div>
-              <div>₹{gst.toFixed(2)}</div>
-            </div>
-            <hr />
-            <div className="d-flex justify-content-between">
-              <div className="h5">Grand Total :</div>
-              <div className="h1 fw-bold">₹{total.toFixed(2)}</div>
-            </div>
-            <div className="d-flex justify-content-end my-3">
-              <Link to="/address">
-                <button className="btn btn-dark">Check Out</button>
-              </Link>
-            </div>
+        {/* Order Summary */}
+        <div className="order-summary mt-5 p-4 bg-light rounded">
+          <h3 className="mb-4">Order Summary</h3>
+          
+          <div className="d-flex justify-content-between mb-2">
+            <span>Subtotal:</span>
+            <span>₹{subtotal.toFixed(2)}</span>
+          </div>
+          
+          <div className="d-flex justify-content-between mb-2">
+            <span>GST (5%):</span>
+            <span>₹{((subtotal * 5) / 100).toFixed(2)}</span>
+          </div>
+          
+          <hr />
+          
+          <div className="d-flex justify-content-between mb-4">
+            <h5>Grand Total:</h5>
+            <h4 className="fw-bold">
+              ₹{(subtotal + (subtotal * 5) / 100).toFixed(2)}
+            </h4>
+          </div>
+          
+          <div className="text-end">
+            <Link to="/address" className="btn btn-dark btn-lg">
+              Proceed to Checkout
+            </Link>
           </div>
         </div>
       </div>
-    </Wrapper>
+    </Wrep>
   );
 }

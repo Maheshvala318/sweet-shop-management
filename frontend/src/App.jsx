@@ -1,5 +1,3 @@
-// Updated App with Enhanced Theme and Components
-
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Components/Home";
@@ -11,8 +9,9 @@ import styled, { createGlobalStyle } from "styled-components";
 import SweetDetails from "./Components/SweetDetails";
 import Register from "./Components/Register";
 import Login from "./Components/Login";
+import { ValidContextProvider } from "./ContextApi/ValidContext";
+import Cart from "./Components/Cart";
 
-// Global theme applied to the whole app
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
@@ -38,21 +37,23 @@ const AppContainer = styled.div`
 
 function App() {
   return (
-    <Router>
-      <AppContainer>
-        <GlobalStyle />
-        <Nav />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/SweetList" element={<SweetList />} />
-          <Route path="/sweet/:id" element={<SweetDetails />} />
-          <Route path="/CartItems" element={<CartItems />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-        <Footer />
-      </AppContainer>
-    </Router>
+    <ValidContextProvider>
+      <Router>
+        <AppContainer>
+          <GlobalStyle />
+          <Nav />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/SweetList" element={<SweetList />} />
+            <Route path="/sweet/:id" element={<SweetDetails />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+          <Footer />
+        </AppContainer>
+      </Router>
+    </ValidContextProvider>
   );
 }
 

@@ -3,7 +3,7 @@ export default function ValidReducer(state, action) {
     case "updateStatus":
       return {
         ...state,
-        status: action.payload === "login" ? "Logout" : "Login"
+        status: action.payload // Expects "login" or "logout" exactly
       };
 
     case "updateShowNav":
@@ -13,17 +13,14 @@ export default function ValidReducer(state, action) {
       };
 
     case "updateData":
-      // Safely handle undefined payload or missing properties
       const payload = action.payload || {};
-      const { name = "", email = "", id = null } = payload;
-      
       return {
         ...state,
         data: {
-          name,
-          email,
-          fullname: name ? `Welcome, ${name}` : "",
-          id: id || state.data.id // Fall back to existing ID if not provided
+          name: payload.name || "",
+          email: payload.email || "",
+          fullname: payload.name ? `Welcome, ${payload.name}` : "",
+          id: payload.id || state.data.id
         }
       };
 

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from .managers import CustomUserManager  # ✅ Import the manager
+from .managers import CustomUserManager
 
 class User(AbstractUser):
     username = None
@@ -16,7 +16,6 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
-    
 class Sweet(models.Model):
     image = models.ImageField(upload_to='uploads/sweets', null=True, blank=True)
     name = models.CharField(max_length=150, null=False, blank=False)

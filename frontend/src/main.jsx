@@ -8,6 +8,7 @@ import { SweetContext, SweetContextProvider } from './ContextApi/SweetsContext.j
 import { FilterContextProvider } from './ContextApi/FilterContext.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ValidContextProvider } from './ContextApi/ValidContext.jsx';
+import { CartProvider } from './ContextApi/CartContext.jsx';
 
 
 
@@ -17,7 +18,9 @@ createRoot(document.getElementById('root')).render(
     <SweetContextProvider>
       <FilterContextProvider>
         <ValidContextProvider>
+          <CartProvider>
            <App />
+          </CartProvider>
         </ValidContextProvider>
       </FilterContextProvider>
     </SweetContextProvider>

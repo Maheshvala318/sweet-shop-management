@@ -18,10 +18,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             name=validated_data['name'],
             email=validated_data['email']
         )
-        user.set_password(validated_data['password'])  # ✅ Hash password
+        user.set_password(validated_data['password'])
         user.save()
         return user
-
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()

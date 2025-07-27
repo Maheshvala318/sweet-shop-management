@@ -32,8 +32,7 @@ class LoginView(APIView):
                 'msg': 'Login successful',
                 'user_id': user.id,
                 'name': user.name,
-                'email': user.email,
-                'token': 'your-auth-token-here'  # Add token if using JWT
+                'email': user.email
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

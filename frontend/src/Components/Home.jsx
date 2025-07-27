@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { useFilter } from "../ContextApi/FilterContext";
 
 const Wrapper = styled.div`
   .main {
     background-color: #FFBF78;
-    background-image: url("/home.png");
     height: 90vh;
     width: 100%;
     background-position: center;
@@ -14,99 +14,163 @@ const Wrapper = styled.div`
     color: #fffce8;
     text-align: center;
     padding: 20px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
   }
 
   .content {
     position: relative;
-    top: 50px;
+    z-index: 2;
+    max-width: 800px;
+    padding: 0 20px;
   }
 
   h1 {
     white-space: nowrap;
     letter-spacing: 6px;
-    font-size: 2.8rem;
-    font-weight: bold;
+    font-size: 3.5rem;
+    font-weight: 700;
     color: #fffce8;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    margin-bottom: 1.5rem;
+    font-family: 'Playfair Display', serif;
   }
 
   p {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     color: #fffce8;
-    font-weiht: 500;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
   }
 
   .shop {
     background-color: transparent;
-    color: White;
-    border: 2px solid #fffce8;
-    padding: 6px 14px;
-    margin-top: 10px;
+    color: white;
+    border: 2px solid white;
+    padding: 12px 32px;
+    margin-top: 25px;
     cursor: pointer;
-    transition: 0.3s ease-in-out;
-    border-radius: 6px;
-    font-weight: bold;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border-radius: 30px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
   }
 
   .shop:hover {
-    background-color: #7C3F1D;
-    color: #fffce8;
+    background-color: rgba(255,255,255,0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
   }
 
-  .category-icons,
-  .featured-products {
-    margin: 30px 20px;
-    padding: 20px;
-    border: 2px solid #f5d5a2;
+  .shop:active {
+    transform: translateY(-1px);
+  }
+
+  .category-icons, .featured-products {
+    margin: 50px auto;
+    padding: 30px;
+    max-width: 1200px;
     border-radius: 12px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-    background-color: #fff4d0;
+    background-color: #fff9e6;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  }
+
+  .section-title {
+    font-size: 2.2rem;
+    color: #7C3F1D;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 1px;
+    position: relative;
+    padding-bottom: 15px;
+  }
+
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: #FF7F2A;
+    border-radius: 3px;
   }
 
   .card {
-    width: 220px;
-    border: 1px solid #ffcc9c;
-    border-radius: 8px;
-    box-shadow: 2px 2px 10px #ffcba4;
-    text-align: center;
+    width: 280px;
+    border: none;
+    border-radius: 10px;
     overflow: hidden;
-    background: #fffef9;
-    transition: transform 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.4s ease;
+    background: white;
+    margin: 15px;
   }
 
   .card:hover {
-    transform: scale(1.05);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.12);
   }
 
   .card img {
     width: 100%;
-    height: 160px;
+    height: 200px;
     object-fit: cover;
   }
 
   .card-body {
-    padding: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .card-body p:first-child {
+    font-size: 1.2rem;
+    color: #7C3F1D;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .card-body p:last-child {
+    color: #FF7F2A;
+    font-weight: 700;
+    font-size: 1.3rem;
   }
 
   @media (max-width: 768px) {
-    .main {
-      height: auto;
-      padding: 40px 10px;
+    h1 {
+      font-size: 2.5rem;
+      letter-spacing: 3px;
     }
 
-    .content {
-      top: 20px;
-      text-align: center;
+    .main {
+      height: auto;
+      padding: 80px 20px;
     }
 
     .card {
-      width: 90%;
-    }
-
-    .shop {
-      padding: 4px 10px;
+      width: 100%;
+      margin: 15px 0;
     }
   }
 `;
@@ -119,80 +183,76 @@ const carouselImages = [
 ];
 
 export default function Home() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { featureSweets = [] } = useFilter();
 
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-useEffect(() => {
-  const interval = setInterval(() => {
-    setCurrentImageIndex((prev) =>
-      prev === carouselImages.length - 1 ? 0 : prev + 1
-    );
-  }, 3000); // change image every 3 seconds
-  return () => clearInterval(interval);
-}, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) =>
+        prev === carouselImages.length - 1 ? 0 : prev + 1
+      );
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Wrapper>
-        <div
+      <div
         className="main"
         style={{
-            backgroundImage: `url(${carouselImages[currentImageIndex]})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            transition: "background-image 0.5s ease-in-out",
+          backgroundImage: `url(${carouselImages[currentImageIndex]})`,
+          transition: "background-image 0.8s ease-in-out"
         }}
-        >
+      >
         <div className="content">
-            <h1>S W E E T &nbsp;D E L I G H T</h1> 
-            <p>Your Favourite Sweet Shop</p>
-            <p>Explore Our Delicious Sweets</p>
-            <Link to="/">
-            <button className="shop">SHOP NOW</button>
-            </Link>
-        </div>
-        </div>
-
-      {/* Sweet Categories — Icons or Images can be used here dynamically */}
-      <div className="category-icons">
-        {/* Commented placeholder: Map over sweet categories here */}
-        {/* Example: ["Chocolate", "Candy", "Laddu"].map(...) */}
-        <div>
-          <h4>🍫 Chocolate</h4>
-        </div>
-        <div>
-          <h4>🍬 Candy</h4>
-        </div>
-        <div>
-          <h4>🍩 Donut</h4>
-        </div>
-        <div>
-          <h4>🍰 Cake</h4>
+          <h1>S W E E T &nbsp; D E L I G H T</h1>
+          <p>Your Favourite Sweet Shop</p>
+          <p>Discover Premium Handcrafted Confections</p>
+          <Link to="/products">
+            <button className="shop">Explore Collection</button>
+          </Link>
         </div>
       </div>
 
-      {/* Featured Products — Replace this with dynamic featured sweets */}
+      <div className="category-icons">
+        <h2 className="section-title">Our Categories</h2>
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div className="card">
+            <img src="/category1.jpg" alt="Chocolate" />
+            <div className="card-body">
+              <p>Chocolate</p>
+              <p>From ₹199</p>
+            </div>
+          </div>
+          <div className="card">
+            <img src="/category2.jpg" alt="Traditional" />
+            <div className="card-body">
+              <p>Traditional</p>
+              <p>From ₹149</p>
+            </div>
+          </div>
+          <div className="card">
+            <img src="/category3.jpg" alt="Festive" />
+            <div className="card-body">
+              <p>Festive Special</p>
+              <p>From ₹249</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="featured-products">
-        {/* Commented placeholder: Map over featureProducts */}
-        <div className="card">
-          <img src="/sweet1.jpg" alt="sweet" />
-          <div className="card-body">
-            <p>Chocolate Barfi</p>
-            <p>₹199</p>
-          </div>
-        </div>
-        <div className="card">
-          <img src="/sweet2.jpg" alt="sweet" />
-          <div className="card-body">
-            <p>Rasgulla</p>
-            <p>₹149</p>
-          </div>
-        </div>
-        <div className="card">
-          <img src="/sweet3.jpg" alt="sweet" />
-          <div className="card-body">
-            <p>Kaju Katli</p>
-            <p>₹249</p>
-          </div>
+        <h2 className="section-title">Featured Confections</h2>
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+          {featureSweets.map((sweet) => (
+            <div className="card" key={sweet.id}>
+              <img src={sweet.image} alt={sweet.name} />
+              <div className="card-body">
+                <p>{sweet.name}</p>
+                <p>₹{sweet.price}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </Wrapper>
